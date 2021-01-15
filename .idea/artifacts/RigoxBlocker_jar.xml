@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="RigoxBlocker:jar">
+    <output-path>$USER_HOME$/OneDrive/Escritorio/PluginImports/RigoxBlocker</output-path>
+    <root id="archive" name="PixelArcade.jar">
+      <element id="module-output" name="RigoxBlocker" />
+    </root>
+  </artifact>
+</component>

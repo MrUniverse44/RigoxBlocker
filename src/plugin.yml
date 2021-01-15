@@ -1,0 +1,12 @@
+main: dev.mruniverse.rigoxblocker.RigoxBlocker
+version: 1.3
+name: RigoxBlocker
+author: MrUniverse44
+description: Command Blocker
+commands:
+  rigoxblocker:
+    description: Main Plugin command.
+  rblocker:
+    description: Main Plugin command.
+  rb:
+    description: Main Plugin command.
