@@ -32,31 +32,6 @@ public class RigoxUpdater {
             RigoxBlocker.redIssue();
         }
     }
-    //public String getVersionResult() {
-    //    String update;
-    //    String[] installed;
-    //    if(currentVersion == null) {
-    //        return "RED_PROBLEM";
-    //    }
-    //    update = currentVersion;
-    //    if(currentVersion.contains(".")) update= currentVersion.replace(".","");
-    //    installed= update.split("-");
-    //    if(installed[1] != null) {
-    //        if(installed[1].toLowerCase().contains("pre")) {
-    //            if(installed[1].toLowerCase().contains("alpha")) {
-    //                return "PRE_ALPHA_VERSION";
-    //            }
-    //            return "PRE_RELEASE";
-    //        }
-    //        if(installed[1].toLowerCase().contains("alpha")) {
-    //            return "ALPHA_VERSION";
-    //        }
-    //        if(installed[1].toLowerCase().contains("release")) {
-    //            return "RELEASE";
-    //        }
-    //    }
-    //    return "RELEASE";
-    //}
     public String getUpdateResult() {
         int using,latest;
         String update;

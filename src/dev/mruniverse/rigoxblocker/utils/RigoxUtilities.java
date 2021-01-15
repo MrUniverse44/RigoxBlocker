@@ -2,7 +2,6 @@ package dev.mruniverse.rigoxblocker.utils;
 
 import dev.mruniverse.rigoxblocker.RigoxBlocker;
 import dev.mruniverse.rigoxblocker.enums.RigoxFile;
-import dev.mruniverse.rigoxblocker.files.RigoxFiles;
 import me.clip.placeholderapi.PlaceholderAPI;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
