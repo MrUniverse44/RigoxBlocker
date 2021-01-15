@@ -1,5 +1,6 @@
 package dev.mruniverse.rigoxblocker;
 
+import dev.mruniverse.rigoxblocker.enums.RigoxFile;
 import dev.mruniverse.rigoxblocker.listeners.CommandBlocker;
 import dev.mruniverse.rigoxblocker.listeners.RigoxBlockCMD;
 import dev.mruniverse.rigoxblocker.files.RigoxFiles;
@@ -11,15 +12,17 @@ import org.bukkit.plugin.java.JavaPlugin;
 public class RigoxBlocker extends JavaPlugin {
     public static RigoxBlocker instance;
     public static RigoxBlocker getInstance() { return instance; }
+    public RigoxFiles rigoxFiles;
     @Override
     public void onLoad() {
         long msToLoad = System.currentTimeMillis();
         instance = this;
+        rigoxFiles = new RigoxFiles();
         SendConsoleMessage("The plugin is loading...");
-        RigoxFiles.initConfig();
-        RigoxFiles.initWriter();
+        rigoxFiles.initConfig();
+        rigoxFiles.initWriter();
         Metrics metrics = new Metrics(this, 9516);
-        RigoxFiles.save();
+        rigoxFiles.save();
         SendConsoleMessage("Plugin config loaded in " + (System.currentTimeMillis() - msToLoad) + "ms.");
     }
     @Override
@@ -30,14 +33,14 @@ public class RigoxBlocker extends JavaPlugin {
         getCommand("rblocker").setExecutor(new RigoxBlockCMD("rblocker"));
         getCommand("rb").setExecutor(new RigoxBlockCMD("rb"));
         getServer().getPluginManager().registerEvents(new CommandBlocker(),this);
-        if(RigoxFiles.getConfig().getBoolean("settings.check-update")) {
+        if(getFiles().getControl(RigoxFile.SETTINGS).getBoolean("settings.check-update")) {
             RigoxUpdater updateChecker = new RigoxUpdater(72359);
             String UpdateResult = updateChecker.getUpdateResult();
             if (UpdateResult.equalsIgnoreCase("UPDATED")) {
                 SendConsoleMessage("&aYou're using latest version of RigoxBlocker, You're Awesome!");
             } else if (UpdateResult.equalsIgnoreCase("NEW_VERSION")) {
                 SendConsoleMessage("&aA new update is available: &bhttps://www.spigotmc.org/resources/72359");
-            } else if (UpdateResult.equalsIgnoreCase("BETA_VERSION")) {
+            } else if (UpdateResult.equalsIgnoreCase("PRE_RELEASE")) {
                 SendConsoleMessage("&aYou are Running a Pre-Release version, please report bugs ;)");
             } else if (UpdateResult.equalsIgnoreCase("RED_PROBLEM")) {
                 SendConsoleMessage("&aRigoxBlocker can't connect to WiFi to check plugin version.");
@@ -50,11 +53,16 @@ public class RigoxBlocker extends JavaPlugin {
 
         SendConsoleMessage("The plugin was loaded in " + (System.currentTimeMillis() - msToLoad) + "ms.");
     }
-
+    public RigoxFiles getFiles() {
+        if(rigoxFiles == null) rigoxFiles = new RigoxFiles();
+        return rigoxFiles;
+    }
     public static void SendConsoleMessage(String message) {
         ChatColor.translateAlternateColorCodes('&',"&b[Rigox Blocker] &f" + message);
     }
-
+    public static void redIssue() {
+        ChatColor.translateAlternateColorCodes('&',"&b[Rigox Blocker] &fRigox Blocker can't connect to Wi-Fi");
+    }
 
 
 }

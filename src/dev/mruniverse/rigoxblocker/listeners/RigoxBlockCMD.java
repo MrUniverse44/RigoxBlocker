@@ -1,6 +1,7 @@
 package dev.mruniverse.rigoxblocker.listeners;
 
-import dev.mruniverse.rigoxblocker.files.RigoxFiles;
+import dev.mruniverse.rigoxblocker.enums.RigoxFile;
+import dev.mruniverse.rigoxblocker.enums.RigoxSave;
 import dev.mruniverse.rigoxblocker.RigoxBlocker;
 import dev.mruniverse.rigoxblocker.utils.RigoxUtilities;
 import org.bukkit.command.Command;
@@ -9,7 +10,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 public class RigoxBlockCMD implements CommandExecutor {
-    private String cmd;
+    private final String cmd;
     public RigoxBlockCMD(String command) {
         this.cmd = command;
     }
@@ -25,17 +26,17 @@ public class RigoxBlockCMD implements CommandExecutor {
                     RigoxUtilities.sendColored(player, "&eRigoxBlocker v" + RigoxBlocker.getInstance().getDescription().getVersion() + ".");
                     RigoxUtilities.sendColored(player, "&7------------- &aRigoxBlocker &7-------------");
                 } else {
-                    RigoxUtilities.sendColored(player, RigoxFiles.getLang().getString("messages.no-perms"));
+                    RigoxUtilities.sendColored(player, RigoxBlocker.getInstance().getFiles().getControl(RigoxFile.MESSAGES).getString("messages.no-perms"));
                 }
             } else {
                 if(args[0].equalsIgnoreCase("reload")) {
                     if (player.hasPermission("rigoxblocker.cmd.reload")) {
                         long timeFinished = System.currentTimeMillis();
-                        RigoxFiles.reloadFiles();
-                        RigoxFiles.initWriter();
-                        RigoxUtilities.sendColored(player,RigoxFiles.getLang().getString("messages.reload").replace("<ms>", "" + (System.currentTimeMillis() - timeFinished)));
+                        RigoxBlocker.getInstance().getFiles().reloadFile(RigoxSave.ALL);
+                        RigoxBlocker.getInstance().getFiles().initWriter();
+                        RigoxUtilities.sendColored(player, RigoxBlocker.getInstance().getFiles().getControl(RigoxFile.MESSAGES).getString("messages.reload").replace("<ms>", "" + (System.currentTimeMillis() - timeFinished)));
                     } else {
-                        RigoxUtilities.sendColored(player, RigoxFiles.getLang().getString("messages.no-perms"));
+                        RigoxUtilities.sendColored(player, RigoxBlocker.getInstance().getFiles().getControl(RigoxFile.MESSAGES).getString("messages.no-perms"));
                     }
                 }
             }
@@ -50,9 +51,9 @@ public class RigoxBlockCMD implements CommandExecutor {
             } else {
                 if(args[0].equalsIgnoreCase("reload")) {
                     long timeFinished = System.currentTimeMillis();
-                    RigoxFiles.reloadFiles();
-                    RigoxFiles.initWriter();
-                    RigoxUtilities.sendColored(sender,RigoxFiles.getLang().getString("messages.reload").replace("<ms>", "" + (System.currentTimeMillis() - timeFinished)));
+                    RigoxBlocker.getInstance().getFiles().reloadFile(RigoxSave.ALL);
+                    RigoxBlocker.getInstance().getFiles().initWriter();
+                    RigoxUtilities.sendColored(sender,RigoxBlocker.getInstance().getFiles().getControl(RigoxFile.MESSAGES).getString("messages.reload").replace("<ms>", "" + (System.currentTimeMillis() - timeFinished)));
 
                 }
             }

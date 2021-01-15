@@ -11,8 +11,8 @@ import javax.net.ssl.HttpsURLConnection;
 
 
 public class RigoxUpdater {
-    private static String currentVersion;
-    private static String newestVersion;
+    private final String currentVersion;
+    private String newestVersion;
     public RigoxUpdater(int projectID) {
         currentVersion = RigoxBlocker.getInstance().getDescription().getVersion();
         try {
@@ -27,37 +27,81 @@ public class RigoxUpdater {
                 sb.append(line).append("\n");
             }
             br.close();
-            newestVersion = sb.toString(); } catch (IOException ignored) {}
-    }
-
-    public static String getUpdateResult() {
-        String result = "RED_PROBLEM";
-        int current,newest;
-        String[] currentV,newestV;
-        if(currentVersion.contains("-") && newestVersion.contains("-")) {
-            currentV = currentVersion.replace(".", "").replace(" ", "").split("-");
-            newestV = newestVersion.replace(".", "").replace(" ", "").split("-");
-            current = Integer.parseInt(currentV[0]);
-            newest = Integer.parseInt(newestV[0]);
-            if (current == newest) {
-                if (currentV[1].equals(newestV[1])) {
-                    result = "UPDATED";
-                } else {
-                    result = "NEW_VERSION";
-                }
-            } else if (current < newest) {
-                result = "NEW_VERSION";
-            } else {
-                if (currentV[1].toLowerCase().contains("pre")) {
-                    result = "BETA_VERSION";
-                    if(currentV[1].toLowerCase().contains("alpha")) {
-                        result = "PRE_ALPHA_VERSION";
-                    }
-                } else if (currentV[1].toLowerCase().contains("alpha")) {
-                    result = "ALPHA_VERSION";
-                }
-            }
+            newestVersion = sb.toString();
+        } catch (IOException ignored) {
+            RigoxBlocker.redIssue();
         }
-        return result;
+    }
+    //public String getVersionResult() {
+    //    String update;
+    //    String[] installed;
+    //    if(currentVersion == null) {
+    //        return "RED_PROBLEM";
+    //    }
+    //    update = currentVersion;
+    //    if(currentVersion.contains(".")) update= currentVersion.replace(".","");
+    //    installed= update.split("-");
+    //    if(installed[1] != null) {
+    //        if(installed[1].toLowerCase().contains("pre")) {
+    //            if(installed[1].toLowerCase().contains("alpha")) {
+    //                return "PRE_ALPHA_VERSION";
+    //            }
+    //            return "PRE_RELEASE";
+    //        }
+    //        if(installed[1].toLowerCase().contains("alpha")) {
+    //            return "ALPHA_VERSION";
+    //        }
+    //        if(installed[1].toLowerCase().contains("release")) {
+    //            return "RELEASE";
+    //        }
+    //    }
+    //    return "RELEASE";
+    //}
+    public String getUpdateResult() {
+        int using,latest;
+        String update;
+        String[] installed, spigot;
+        //Version Verificator
+
+        if(currentVersion == null || newestVersion == null) {
+            return "RED_PROBLEM";
+        }
+
+        //Version Setup
+
+        //* First Setup
+
+        update= currentVersion;
+        if(currentVersion.contains(".")) update= currentVersion.replace(".","");
+        installed= update.split("-");
+        update= newestVersion;
+        if(newestVersion.contains(".")) update= newestVersion.replace(".","");
+        spigot= update.split("-");
+
+        //* Second Setup
+
+        using= Integer.parseInt(installed[0]);
+        latest= Integer.parseInt(spigot[0]);
+
+        //Result Setup
+        if(using == latest) {
+            if(installed[1].equalsIgnoreCase(spigot[1])) {
+                return "UPDATED";
+            }
+            return "NEW_VERSION";
+        }
+        if(using < latest) {
+            return "NEW_VERSION";
+        }
+        if(installed[1].toLowerCase().contains("pre")) {
+            if(installed[1].toLowerCase().contains("alpha")) {
+                return "PRE_ALPHA_VERSION";
+            }
+            return "PRE_RELEASE";
+        }
+        if(installed[1].toLowerCase().contains("alpha")) {
+            return "ALPHA_VERSION";
+        }
+        return "RED_PROBLEM";
     }
 }

@@ -5,5 +5,6 @@ public enum Actions {
     ACTIONBAR,
     SOUND,
     COMMAND,
-    CONSOLE_COMMAND
+    CONSOLE_COMMAND,
+    NONE
 }

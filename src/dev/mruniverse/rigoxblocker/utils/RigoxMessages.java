@@ -1,5 +1,7 @@
 package dev.mruniverse.rigoxblocker.utils;
 
+import dev.mruniverse.rigoxblocker.enums.Actions;
+import dev.mruniverse.rigoxblocker.enums.RigoxFile;
 import dev.mruniverse.rigoxblocker.files.RigoxFiles;
 import dev.mruniverse.rigoxblocker.RigoxBlocker;
 import org.bukkit.Bukkit;
@@ -9,50 +11,60 @@ import org.bukkit.entity.Player;
 
 public class RigoxMessages {
     public static void sendBlock(Player player, String command) {
-        for(String message : RigoxUtilities.manageList(player, RigoxFiles.getConfig().getStringList("modules.commandBlocker.onError"))) {
-            String cmd = "MSG";
+        for(String message : RigoxUtilities.manageList(player, RigoxBlocker.getInstance().getFiles().getControl(RigoxFile.SETTINGS).getStringList("modules.commandBlocker.onError"))) {
+            Actions action = Actions.NONE;
             if(message.contains("[msg]")) {
-                cmd = "MSG";
+                action = Actions.MESSAGE;
             }
             if(message.contains("[ConsoleCMD]")) {
-                cmd = "CON";
+                action = Actions.CONSOLE_COMMAND;
             }
             if(message.contains("[playerCMD]")) {
-                cmd = "CMD";
+                action = Actions.COMMAND;
             }
             if(message.contains("[sound]")) {
-                cmd = "SND";
+                action = Actions.SOUND;
             }
             if(message.contains("[actionbar]")) {
-                cmd = "ABA";
+                action = Actions.ACTIONBAR;
             }
-            execute(player,cmd,message,command);
+            execute(player,action,message,command);
         }
     }
 
-    private static void execute(Player player,String type,String command,String usedCommand) {
+    @SuppressWarnings("ConstantConditions")
+    private static void execute(Player player, Actions action, String command, String usedCommand) {
         if(command.contains("<command>")) { command = command.replace("<command>", usedCommand); }
-        if(command.contains("[prefix]")) { command = command.replace("[prefix]",RigoxUtilities.manageString(player,RigoxFiles.getLang().getString("messages.prefix"))); }
-        if(type.equalsIgnoreCase("CMD")) {
+        if(command.contains("[prefix]")) { command = command.replace("[prefix]",RigoxUtilities.manageString(player,RigoxBlocker.getInstance().getFiles().getControl(RigoxFile.MESSAGES).getString("messages.prefix"))); }
+        if(action.equals(Actions.COMMAND)) {
             String cmd = command.replace("[playerCMD] ","").replace("[playerCMD]","");
             player.performCommand(cmd);
-        } else if (type.equalsIgnoreCase("ABA")) {
+            return;
+        }
+        if (action.equals(Actions.ACTIONBAR)) {
             RigoxBlocker.SendConsoleMessage("The [actionbar] variable isn't working now, sorry. :(");
-        } else if (type.equalsIgnoreCase("MSG")) {
+            return;
+        }
+        if (action.equals(Actions.MESSAGE) || action.equals(Actions.NONE)) {
             String cmd = command.replace("[msg] ","").replace("[msg]","");
             player.sendMessage(cmd);
-        } else if (type.equalsIgnoreCase("SND")) {
+            return;
+        }
+        if (action.equals(Actions.SOUND)) {
             String cmd = command.replace("[sound] ","").replace("[sound]","");
             if(Sound.valueOf(cmd) != null) {
                 player.getWorld().playSound(player.getLocation(), Sound.valueOf(cmd), 1f, 1f);
-            } else {
-                RigoxBlocker.SendConsoleMessage("&cSound " + cmd + "&c doesn't exist!");
+                return;
             }
-        } else if (type.equalsIgnoreCase("CON")) {
+            RigoxBlocker.SendConsoleMessage("&cSound " + cmd + "&c doesn't exist!");
+            return;
+        }
+        if (action.equals(Actions.CONSOLE_COMMAND)) {
             String cmd = command.replace("[ConsoleCMD] ","").replace("[ConsoleCMD]","");
             ConsoleCommandSender consoleSender = RigoxBlocker.getInstance().getServer().getConsoleSender();
             Bukkit.dispatchCommand(consoleSender,cmd);
         }
+
     }
 
 }

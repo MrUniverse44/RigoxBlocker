@@ -1,6 +1,8 @@
 package dev.mruniverse.rigoxblocker.files;
 
 import dev.mruniverse.rigoxblocker.RigoxBlocker;
+import dev.mruniverse.rigoxblocker.enums.RigoxFile;
+import dev.mruniverse.rigoxblocker.enums.RigoxSave;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 
@@ -10,13 +12,12 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
 
 public class RigoxFiles {
     public static File config, msg,cmds;
     public static FileConfiguration rConfig, rMsg,rCmds;
 
-    public static void initConfig() {
+    public void initConfig() {
         boolean created;
         if(!RigoxBlocker.getInstance().getDataFolder().exists()) {
             created = RigoxBlocker.getInstance().getDataFolder().mkdir();
@@ -54,42 +55,44 @@ public class RigoxFiles {
 
 
 
-    private static void addConfig(boolean isConfig,String path,Object object) {
-        if(isConfig) {
-            if(!getConfig().contains(path)) {
-                getConfig().set(path,object);
+    private void addConfig(RigoxFile rigoxFile,String path,Object object) {
+        if(rigoxFile.equals(RigoxFile.MESSAGES)) {
+            if(!getControl(RigoxFile.MESSAGES).contains(path)) {
+                getControl(RigoxFile.MESSAGES).set(path,object);
             }
-        } else {
-            if(!getLang().contains(path)) {
-                getLang().set(path, object);
+            return;
+        }
+        if(rigoxFile.equals(RigoxFile.SETTINGS)) {
+            if(!getControl(RigoxFile.SETTINGS).contains(path)) {
+                getControl(RigoxFile.SETTINGS).set(path,object);
+            }
+            return;
+        }
+        if(rigoxFile.equals(RigoxFile.COMMANDS)) {
+            if(!getControl(RigoxFile.COMMANDS).contains(path)) {
+                getControl(RigoxFile.COMMANDS).set(path,object);
             }
         }
     }
 
-    private static void addExampleCommand(String path,Object object) {
-        if(!getCommands().contains(path)) {
-            getCommands().set(path, object);
-        }
-    }
-
-    public static void initWriter() {
+    public void initWriter() {
         List<String> pluginList = new ArrayList<>();
         pluginList.add("[msg][prefix]&8¿What are you trying to do?");
         pluginList.add("[msg][prefix]&7You can't use &c<command>&7!");
         pluginList.add("[sound]VILLAGER_NO");
-        addConfig(true,"settings.check-update", true);
-        addConfig(true,"settings.PlaceholderAPI-Support", true);
-        addConfig(true,"modules.commandBlocker.toggle",true);
-        addConfig(true,"modules.commandBlocker.onError",pluginList);
-        addConfig(true,"modules.Block-TabCompleter.toggle", false);
-        addConfig(true,"modules.Block-TabCompleter.fakeList.toggle",false);
+        addConfig(RigoxFile.SETTINGS,"settings.check-update", true);
+        addConfig(RigoxFile.SETTINGS,"settings.PlaceholderAPI-Support", true);
+        addConfig(RigoxFile.SETTINGS,"modules.commandBlocker.toggle",true);
+        addConfig(RigoxFile.SETTINGS,"modules.commandBlocker.onError",pluginList);
+        addConfig(RigoxFile.SETTINGS,"modules.Block-TabCompleter.toggle", false);
+        addConfig(RigoxFile.SETTINGS,"modules.Block-TabCompleter.fakeList.toggle",false);
         pluginList = new ArrayList<>();
         pluginList.add("NetworkAPI");
         pluginList.add("PixelMOTD");
-        addConfig(true,"modules.Block-TabCompleter.fakeList.list",pluginList);
-        addConfig(false,"messages.prefix", "&b[Rigox Blocker] &7");
-        addConfig(false,"messages.reload","&aThe plugin was reloaded in <ms>ms");
-        addConfig(false,"messages.no-perms","&7You don't have permissions for this command.");
+        addConfig(RigoxFile.SETTINGS,"modules.Block-TabCompleter.fakeList.list",pluginList);
+        addConfig(RigoxFile.MESSAGES,"messages.prefix", "&b[Rigox Blocker] &7");
+        addConfig(RigoxFile.MESSAGES,"messages.reload","&aThe plugin was reloaded in <ms>ms");
+        addConfig(RigoxFile.MESSAGES,"messages.no-perms","&7You don't have permissions for this command.");
         pluginList = new ArrayList<>();
         pluginList.add("bukkit:plugins");
         pluginList.add("bukkit:pl");
@@ -154,60 +157,60 @@ public class RigoxFiles {
         pluginList.add("worldedit:solve");
         pluginList.add("worldedit:eval");
         pluginList.add("executioner");
-        addExampleCommand("notify-console","&7(Notify of &c%player%&7) tried to execute &c/%command%&7!");
-        addExampleCommand("blocked-cmds",pluginList);
+        addConfig(RigoxFile.COMMANDS,"notify-console","&7(Notify of &c%player%&7) tried to execute &c/%command%&7!");
+        addConfig(RigoxFile.COMMANDS,"blocked-cmds",pluginList);
         save();
-        reloadFiles();
+        reloadFile(RigoxSave.ALL);
     }
-
-    public static void reloadFiles() {
+    public void reloadFile(RigoxSave rigoxSave) {
         initConfig();
-        rConfig = YamlConfiguration.loadConfiguration(config);
-        rMsg = YamlConfiguration.loadConfiguration(msg);
-        rCmds = YamlConfiguration.loadConfiguration(cmds);
-        InputStream defCConfig = RigoxBlocker.getInstance().getResource("settings.yml");
-        InputStream defCLang = RigoxBlocker.getInstance().getResource("messages.yml");
-        InputStream defCCmds = RigoxBlocker.getInstance().getResource("commands.yml");
-        if(defCConfig != null) {
-            YamlConfiguration defConfig = YamlConfiguration.loadConfiguration(new InputStreamReader(defCConfig));
-            rConfig.setDefaults(defConfig);
+        if(rigoxSave.equals(RigoxSave.MESSAGES) || rigoxSave.equals(RigoxSave.ALL)) {
+            rMsg = YamlConfiguration.loadConfiguration(msg);
+            InputStream defCLang = RigoxBlocker.getInstance().getResource("messages.yml");
+            if(defCLang != null) {
+                YamlConfiguration defLang = YamlConfiguration.loadConfiguration(new InputStreamReader(defCLang));
+                rMsg.setDefaults(defLang);
+            }
         }
-        if(defCCmds != null) {
-            YamlConfiguration defCmds = YamlConfiguration.loadConfiguration(new InputStreamReader(defCCmds));
-            rCmds.setDefaults(defCmds);
+        if(rigoxSave.equals(RigoxSave.SETTINGS) || rigoxSave.equals(RigoxSave.ALL)) {
+            rConfig = YamlConfiguration.loadConfiguration(config);
+            InputStream defCConfig = RigoxBlocker.getInstance().getResource("settings.yml");
+            if(defCConfig != null) {
+                YamlConfiguration defConfig = YamlConfiguration.loadConfiguration(new InputStreamReader(defCConfig));
+                rConfig.setDefaults(defConfig);
+            }
         }
-        if(defCLang != null) {
-            YamlConfiguration defLang = YamlConfiguration.loadConfiguration(new InputStreamReader(defCLang));
-            rMsg.setDefaults(defLang);
+        if(rigoxSave.equals(RigoxSave.COMMANDS) || rigoxSave.equals(RigoxSave.ALL)) {
+            rCmds = YamlConfiguration.loadConfiguration(cmds);
+            InputStream defCCmds = RigoxBlocker.getInstance().getResource("commands.yml");
+            if(defCCmds != null) {
+                YamlConfiguration defCmds = YamlConfiguration.loadConfiguration(new InputStreamReader(defCCmds));
+                rCmds.setDefaults(defCmds);
+            }
         }
     }
-
-    public static FileConfiguration getConfig() {
-        if(rConfig == null) { reloadFiles(); }
+    public FileConfiguration getControl(RigoxFile rigoxFile) {
+        if(rigoxFile.equals(RigoxFile.MESSAGES)) {
+            if(rMsg == null) { reloadFile(RigoxSave.MESSAGES); }
+            return rMsg;
+        }
+        if(rigoxFile.equals(RigoxFile.COMMANDS)) {
+            if(rCmds == null) { reloadFile(RigoxSave.COMMANDS); }
+            return rCmds;
+        }
+        if(rConfig == null) { reloadFile(RigoxSave.SETTINGS); }
         return rConfig;
     }
-
-    public static FileConfiguration getLang() {
-        if(rMsg == null) { reloadFiles(); }
-        return rMsg;
-    }
-
-    public static FileConfiguration getCommands() {
-        if(rCmds == null) { reloadFiles(); }
-        return rCmds;
-    }
-
-    public static void save() {
+    public void save() {
         if (config == null || rConfig == null || rMsg == null || msg == null || rCmds == null || cmds == null) {
             return;
         }
         try {
-            getConfig().save(config);
-            getLang().save(msg);
-            getCommands().save(cmds);
-        } catch (IOException ex) {
-            RigoxBlocker.getInstance().getLogger().log(Level.SEVERE, "Could not save config to " +
-                    config + ", " + msg, ex);
+            getControl(RigoxFile.COMMANDS).save(cmds);
+            getControl(RigoxFile.MESSAGES).save(msg);
+            getControl(RigoxFile.SETTINGS).save(config);
+        }catch(Throwable throwable) {
+            RigoxBlocker.SendConsoleMessage("&aUps");
         }
     }
 

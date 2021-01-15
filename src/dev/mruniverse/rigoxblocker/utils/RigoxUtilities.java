@@ -1,5 +1,7 @@
 package dev.mruniverse.rigoxblocker.utils;
 
+import dev.mruniverse.rigoxblocker.RigoxBlocker;
+import dev.mruniverse.rigoxblocker.enums.RigoxFile;
 import dev.mruniverse.rigoxblocker.files.RigoxFiles;
 import me.clip.placeholderapi.PlaceholderAPI;
 import org.bukkit.ChatColor;
@@ -11,22 +13,21 @@ import java.util.List;
 
 public class RigoxUtilities {
     public static String manageString(Player player, String message) {
-        if(RigoxFiles.getConfig().getBoolean("settings.PlaceholderAPI-Support")) {
+        if(RigoxBlocker.getInstance().getFiles().getControl(RigoxFile.SETTINGS).getBoolean("settings.PlaceholderAPI-Support")) {
             return ChatColor.translateAlternateColorCodes('&', PlaceholderAPI.setPlaceholders(player, message));
-        } else {
-            return ChatColor.translateAlternateColorCodes('&', message);
         }
+        return ChatColor.translateAlternateColorCodes('&', message);
     }
     public static List<String> manageList(Player player, List<String> loreToRecolor) {
         List<String> recolored = new ArrayList<>();
-        if(RigoxFiles.getConfig().getBoolean("settings.PlaceholderAPI-Support")) {
+        if(RigoxBlocker.getInstance().getFiles().getControl(RigoxFile.SETTINGS).getBoolean("settings.PlaceholderAPI-Support")) {
             for (String color : loreToRecolor) {
                 recolored.add(ChatColor.translateAlternateColorCodes('&', PlaceholderAPI.setPlaceholders(player, color)));
             }
-        } else {
-            for (String color : loreToRecolor) {
-                recolored.add(ChatColor.translateAlternateColorCodes('&', color));
-            }
+            return recolored;
+        }
+        for (String color : loreToRecolor) {
+            recolored.add(ChatColor.translateAlternateColorCodes('&', color));
         }
         return recolored;
     }
