@@ -80,6 +80,12 @@ public class RigoxFiles {
         pluginList.add("[msg][prefix]&8¿What are you trying to do?");
         pluginList.add("[msg][prefix]&7You can't use &c<command>&7!");
         pluginList.add("[sound]VILLAGER_NO");
+        if(getControl(RigoxFile.COMMANDS).get("conditions") == null) {
+            addConfig(RigoxFile.COMMANDS,"conditions.hasPermission.value","rigoxblocker.permission.blockedCmd");
+            addConfig(RigoxFile.COMMANDS,"conditions.hasPermission.type","PERMISSION");
+            addConfig(RigoxFile.COMMANDS,"conditions.hasPermission.error-result.toggle",true);
+            addConfig(RigoxFile.COMMANDS,"conditions.hasPermission.error-result.values",pluginList);
+        }
         addConfig(RigoxFile.SETTINGS,"settings.check-update", true);
         addConfig(RigoxFile.SETTINGS,"settings.PlaceholderAPI-Support", true);
         addConfig(RigoxFile.SETTINGS,"modules.commandBlocker.toggle",true);

@@ -2,7 +2,6 @@ package dev.mruniverse.rigoxblocker.utils;
 
 import dev.mruniverse.rigoxblocker.enums.Actions;
 import dev.mruniverse.rigoxblocker.enums.RigoxFile;
-import dev.mruniverse.rigoxblocker.files.RigoxFiles;
 import dev.mruniverse.rigoxblocker.RigoxBlocker;
 import org.bukkit.Bukkit;
 import org.bukkit.Sound;
@@ -31,7 +30,29 @@ public class RigoxMessages {
             execute(player,action,message,command);
         }
     }
-
+    public static void sendConditionBlock(String condition,Player player, String command,String value) {
+        if(RigoxBlocker.getInstance().getFiles().getControl(RigoxFile.COMMANDS).getBoolean("conditions." + condition + ".error-result.toggle")) {
+            for (String message : RigoxUtilities.manageList(player, RigoxBlocker.getInstance().getFiles().getControl(RigoxFile.COMMANDS).getStringList("conditions" + condition + ".error-result.values"))) {
+                Actions action = Actions.NONE;
+                if (message.contains("[msg]")) {
+                    action = Actions.MESSAGE;
+                }
+                if (message.contains("[ConsoleCMD]")) {
+                    action = Actions.CONSOLE_COMMAND;
+                }
+                if (message.contains("[playerCMD]")) {
+                    action = Actions.COMMAND;
+                }
+                if (message.contains("[sound]")) {
+                    action = Actions.SOUND;
+                }
+                if (message.contains("[actionbar]")) {
+                    action = Actions.ACTIONBAR;
+                }
+                execute(player, action, message.replace("%value%",value), command);
+            }
+        }
+    }
     @SuppressWarnings("ConstantConditions")
     private static void execute(Player player, Actions action, String command, String usedCommand) {
         if(command.contains("<command>")) { command = command.replace("<command>", usedCommand); }
