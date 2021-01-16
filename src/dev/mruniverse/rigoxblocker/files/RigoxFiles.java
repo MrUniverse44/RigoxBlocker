@@ -93,7 +93,9 @@ public class RigoxFiles {
         addConfig(RigoxFile.SETTINGS,"modules.Block-TabCompleter.toggle", false);
         addConfig(RigoxFile.SETTINGS,"modules.Block-TabCompleter.fakeList.toggle",false);
         pluginList = new ArrayList<>();
-        pluginList.add("NetworkAPI");
+        pluginList.add("RigoxBlocker");
+        pluginList.add("RigoxSkyBlock");
+        pluginList.add("RigoxPractice");
         pluginList.add("PixelMOTD");
         addConfig(RigoxFile.SETTINGS,"modules.Block-TabCompleter.fakeList.list",pluginList);
         addConfig(RigoxFile.MESSAGES,"messages.prefix", "&b[Rigox Blocker] &7");
