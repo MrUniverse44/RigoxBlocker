@@ -13,7 +13,11 @@ import java.util.List;
 public class RigoxUtilities {
     public static String manageString(Player player, String message) {
         if(RigoxBlocker.getInstance().getFiles().getControl(RigoxFile.SETTINGS).getBoolean("settings.PlaceholderAPI-Support")) {
-            return ChatColor.translateAlternateColorCodes('&', PlaceholderAPI.setPlaceholders(player, message));
+            if(RigoxBlocker.getInstance().hasPAPI()) {
+                return ChatColor.translateAlternateColorCodes('&', PlaceholderAPI.setPlaceholders(player, message));
+            } else {
+                return ChatColor.translateAlternateColorCodes('&', message);
+            }
         }
         return ChatColor.translateAlternateColorCodes('&', message);
     }
@@ -21,7 +25,11 @@ public class RigoxUtilities {
         List<String> recolored = new ArrayList<>();
         if(RigoxBlocker.getInstance().getFiles().getControl(RigoxFile.SETTINGS).getBoolean("settings.PlaceholderAPI-Support")) {
             for (String color : loreToRecolor) {
-                recolored.add(ChatColor.translateAlternateColorCodes('&', PlaceholderAPI.setPlaceholders(player, color)));
+                if(RigoxBlocker.getInstance().hasPAPI()) {
+                    recolored.add(ChatColor.translateAlternateColorCodes('&', PlaceholderAPI.setPlaceholders(player, color)));
+                } else {
+                    recolored.add(ChatColor.translateAlternateColorCodes('&', color));
+                }
             }
             return recolored;
         }

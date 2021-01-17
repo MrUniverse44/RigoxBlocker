@@ -28,7 +28,7 @@ public class CommandBlocker implements Listener {
                     event.setCancelled(true);
                 }
                 if(event.isCancelled()) return;
-                if (lowerCaseCmds.contains("[condition:" + condition + "]" + event.getMessage().toLowerCase())) {
+                if (lowerCaseCmds.contains("[condition:" + condition + "]" + event.getMessage().toLowerCase().replace("/",""))) {
                     String value = getValue(condition);
                     if (getCondition(condition).equals(ConditionType.PASSWORD)) {
                         String passwordSetup = event.getMessage();

@@ -47,7 +47,6 @@ public class RigoxFiles {
                     RigoxBlocker.SendConsoleMessage("&fFile &bitems.yml &fcreated.");
                 }
             }
-            RigoxBlocker.SendConsoleMessage("All files has been &bchecked&f.");
         } catch(IOException e) {
             RigoxBlocker.SendConsoleMessage("Can't create &bsettings.yml &fand &bmessages.yml &fand &bcommands.yml &fthe plugin don't have permissions to create files.");
         }

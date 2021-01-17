@@ -12,9 +12,11 @@ import javax.net.ssl.HttpsURLConnection;
 
 public class RigoxUpdater {
     private final String currentVersion;
+    private RigoxBlocker plugin;
     private String newestVersion;
-    public RigoxUpdater(int projectID) {
+    public RigoxUpdater(int projectID,RigoxBlocker main) {
         currentVersion = RigoxBlocker.getInstance().getDescription().getVersion();
+        plugin = main;
         try {
             URL url = new URL("https://api.spigotmc.org/legacy/update.php?resource=" + projectID);
             HttpsURLConnection connection;
@@ -24,7 +26,7 @@ public class RigoxUpdater {
             StringBuilder sb = new StringBuilder();
             String line;
             while ((line = br.readLine()) != null) {
-                sb.append(line).append("\n");
+                sb.append(line);
             }
             br.close();
             newestVersion = sb.toString();
@@ -46,17 +48,16 @@ public class RigoxUpdater {
 
         //* First Setup
 
-        update= currentVersion;
-        if(currentVersion.contains(".")) update= currentVersion.replace(".","");
+        update= currentVersion.replace(".","");
+        //if(currentVersion.contains(".")) update= currentVersion.replace(".","");
         installed= update.split("-");
-        update= newestVersion;
-        if(newestVersion.contains(".")) update= newestVersion.replace(".","");
+        update= newestVersion.replace(".","");
+        //if(newestVersion.contains(".")) update= newestVersion.replace(".","");
         spigot= update.split("-");
 
         //* Second Setup
-
-        using= Integer.parseInt(installed[0]);
-        latest= Integer.parseInt(spigot[0]);
+        using= Integer.parseInt(installed[0].replace(" ",""));
+        latest= Integer.parseInt(spigot[0].replace(" ",""));
 
         //Result Setup
         if(using == latest) {
@@ -77,6 +78,6 @@ public class RigoxUpdater {
         if(installed[1].toLowerCase().contains("alpha")) {
             return "ALPHA_VERSION";
         }
-        return "RED_PROBLEM";
+        return "RELEASE";
     }
 }

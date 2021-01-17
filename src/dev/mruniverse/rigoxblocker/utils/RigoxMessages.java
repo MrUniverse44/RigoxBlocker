@@ -73,8 +73,9 @@ public class RigoxMessages {
         }
         if (action.equals(Actions.SOUND)) {
             String cmd = command.replace("[sound] ","").replace("[sound]","");
-            if(Sound.valueOf(cmd) != null) {
-                player.getWorld().playSound(player.getLocation(), Sound.valueOf(cmd), 1f, 1f);
+            Sound sound = Sound.valueOf(cmd);
+            if(sound != null) {
+                player.getWorld().playSound(player.getLocation(), sound, 1f, 1f);
                 return;
             }
             RigoxBlocker.SendConsoleMessage("&cSound " + cmd + "&c doesn't exist!");
